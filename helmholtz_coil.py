@@ -37,11 +37,7 @@ class single_coil:
         Bz = quad(dBdthetai, 0, 2*pi, args=(2,))[0]
         
         return np.array([Bx, By, Bz])
-    
-    def get_field(self, series_of_point_in_space):
-        for point in series_of_point_in_space:
-            point.set_field( self.B(point.get_position()) )
-            
+                
     def add_field(self, series_of_point_in_space):
         for point in series_of_point_in_space:
             point.add_field( self.B(point.get_position()) )    
@@ -52,10 +48,8 @@ class point_in_space:
         self.x = x
         self.y = y
         self.z = z
-    
-    def set_field(self, B):
-        self.B = B
-    
+        self.B = np.zeros(3)
+        
     def add_field(self, B):
         self.B = self.B + B
     
@@ -74,7 +68,8 @@ coil1 = single_coil([-1,0,0], 1, 1/mu0)
 coil2 = single_coil([ 1,0,0], 1, 1/mu0)
 
 mesh = generate_mesh([-4,4,0.1], [-3,3,0.1], [0,1,1])
-coil1.get_field(mesh)
+
+coil1.add_field(mesh)
 coil2.add_field(mesh)
 
 X = [point.get_position()[0] for point in mesh]
