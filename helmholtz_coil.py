@@ -40,7 +40,12 @@ class single_coil:
     
     def get_field(self, series_of_point_in_space):
         for point in series_of_point_in_space:
-            point.set_field( self.B(point.get_position()) )         
+            point.set_field( self.B(point.get_position()) )
+            
+    def add_field(self, series_of_point_in_space):
+        for point in series_of_point_in_space:
+            point.add_field( self.B(point.get_position()) )    
+            
             
 class point_in_space:
     def __init__(self, x, y, z):
@@ -50,7 +55,10 @@ class point_in_space:
     
     def set_field(self, B):
         self.B = B
-        
+    
+    def add_field(self, B):
+        self.B = self.B + B
+    
     def get_position(self):
         return np.array([self.x, self.y, self.z])
     
@@ -62,16 +70,17 @@ def generate_mesh(X, Y, Z):
     return points
 
 
-coil1 = single_coil([0,0,0], 1, 1/mu0)
-mesh = generate_mesh([-4,4,0.1], [-4,4,0.1], [0,1,1])
+coil1 = single_coil([-1,0,0], 1, 1/mu0)
+coil2 = single_coil([ 1,0,0], 1, 1/mu0)
+
+mesh = generate_mesh([-4,4,0.1], [-3,3,0.1], [0,1,1])
 coil1.get_field(mesh)
+coil2.add_field(mesh)
 
 X = [point.get_position()[0] for point in mesh]
 Y = [point.get_position()[1] for point in mesh]
 Bx = [point.get_field()[0] for point in mesh]
 By = [point.get_field()[1] for point in mesh]
-
-print np.shape(X), np.shape(Y), np.shape(Bx), np.shape(By)
 
 plt.quiver(X,Y,Bx,By)
 plt.show()
