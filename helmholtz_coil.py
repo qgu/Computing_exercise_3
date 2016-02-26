@@ -50,20 +50,14 @@ class single_coil:
 
 # Faster version, using simpson's rule in estimation.
     def faster_B(self, r_field):        
+        # number of samples used in simpsons integration
         N = 10
         theta_range = np.linspace(0, 2*pi, N)
-         
+        
+        # Evaluate vector dB along circumference
         dB = np.array([self.dBdtheta(r_field, theta) for theta in theta_range])
-
-        dBx = dB[:,0]
-        dBy = dB[:,1]
-        dBz = dB[:,2]
-         
-        Bx =  simps(dBx,theta_range)
-        By =  simps(dBy,theta_range)
-        Bz =  simps(dBz,theta_range)
  
-        return np.array([Bx, By, Bz])                 
+        return np.array(simps(np.transpose(dB), theta_range))                 
     
 # Vectorized version. This is very memory iefficient, though vectorized. Not used
     def v_B(self,series_of_point_in_space):
